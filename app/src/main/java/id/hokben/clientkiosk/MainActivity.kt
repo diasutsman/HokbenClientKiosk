@@ -10,14 +10,14 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import dagger.hilt.android.AndroidEntryPoint
-import id.hokben.clientkiosk.databinding.ActivitySamplePeerConnectionBinding
+import id.hokben.clientkiosk.databinding.ActivityMainBinding
 import id.hokben.clientkiosk.repository.MainRepository
 import id.hokben.clientkiosk.service.WebrtcService.Companion.listener
 import id.hokben.clientkiosk.service.WebrtcService.Companion.screenPermissionIntent
 import id.hokben.clientkiosk.service.WebrtcService.Companion.surfaceView
 import id.hokben.clientkiosk.service.WebrtcServiceRepository
-import id.hokben.clientkiosk.webrtc.SimpleSdpObserver
 import id.hokben.clientkiosk.utils.Utils
+import id.hokben.clientkiosk.webrtc.SimpleSdpObserver
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
     var localAudioTrack: AudioTrack? = null
     var surfaceTextureHelper: SurfaceTextureHelper? = null
 
-    private lateinit var binding: ActivitySamplePeerConnectionBinding;
+    private lateinit var binding: ActivityMainBinding;
     private var peerConnection: PeerConnection? = null
     private var rootEglBase: EglBase? = null
     private val peerConnectionFactory: PeerConnectionFactory by lazy { createPeerConnectionFactory() }
@@ -78,11 +78,13 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_sample_peer_connection)
-        setSupportActionBar(binding.toolbar)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        startVideoCapture()
-        initShareScreen()
+
+        binding.askHelpBtn.setOnClickListener {
+            startVideoCapture()
+            initShareScreen()
+        }
     }
 
 
