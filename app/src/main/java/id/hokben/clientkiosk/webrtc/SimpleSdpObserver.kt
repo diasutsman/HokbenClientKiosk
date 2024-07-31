@@ -1,4 +1,4 @@
-package id.hokben.clientkiosk.tutorial
+package id.hokben.clientkiosk.webrtc
 
 import org.webrtc.SdpObserver
 import org.webrtc.SessionDescription
