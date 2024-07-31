@@ -31,9 +31,9 @@ class MainRepository @Inject constructor(
     private lateinit var surfaceView: SurfaceViewRenderer
     var listener: Listener? = null
 
-    fun init(username: String, surfaceView: SurfaceViewRenderer) {
+    fun init(username: String) {
         this.username = username
-        this.surfaceView = surfaceView
+//        this.surfaceView = surfaceView
         initSocket()
         initWebrtcClient()
 
@@ -59,8 +59,8 @@ class MainRepository @Inject constructor(
         )
     }
 
-    fun startScreenCapturing(surfaceView: SurfaceViewRenderer) {
-        webrtcClient.startScreenCapturing(surfaceView)
+    fun startScreenCapturing() {
+        webrtcClient.startScreenCapturing()
     }
 
     fun startCall(target: String) {
@@ -89,7 +89,7 @@ class MainRepository @Inject constructor(
 
     private fun initWebrtcClient() {
         webrtcClient.listener = this
-        webrtcClient.initializeWebrtcClient(username, surfaceView,
+        webrtcClient.initializeWebrtcClient(username,
             object : MyPeerObserver() {
                 override fun onIceCandidate(p0: IceCandidate?) {
                     Log.e("NotError", "MainRepository@initWebrtcClient@onIceCandidate: $p0")

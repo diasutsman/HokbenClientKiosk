@@ -7,9 +7,9 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import dagger.hilt.android.AndroidEntryPoint
 import id.hokben.clientkiosk.R
 import id.hokben.clientkiosk.repository.MainRepository
-import dagger.hilt.android.AndroidEntryPoint
 import org.webrtc.MediaStream
 import org.webrtc.SurfaceViewRenderer
 import javax.inject.Inject
@@ -44,7 +44,7 @@ class WebrtcService @Inject constructor() : Service() , MainRepository.Listener 
             when(intent.action){
                 "StartIntent"->{
                     this.username = intent.getStringExtra("username").toString()
-                    mainRepository.init(username, surfaceView!!)
+                    mainRepository.init(username)
                     startServiceWithNotification()
                 }
                 "StopIntent"->{
@@ -65,7 +65,7 @@ class WebrtcService @Inject constructor() : Service() , MainRepository.Listener 
                     val target= intent.getStringExtra("target")
                     target?.let {
                         mainRepository.setPermissionIntentToWebrtcClient(screenPermissionIntent!!)
-                        mainRepository.startScreenCapturing(surfaceView!!)
+                        mainRepository.startScreenCapturing()
                         mainRepository.sendScreenShareConnection(it)
                     }
                 }

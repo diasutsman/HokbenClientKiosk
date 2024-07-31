@@ -14,7 +14,6 @@ import id.hokben.clientkiosk.databinding.ActivityMainBinding
 import id.hokben.clientkiosk.repository.MainRepository
 import id.hokben.clientkiosk.service.WebrtcService.Companion.listener
 import id.hokben.clientkiosk.service.WebrtcService.Companion.screenPermissionIntent
-import id.hokben.clientkiosk.service.WebrtcService.Companion.surfaceView
 import id.hokben.clientkiosk.service.WebrtcServiceRepository
 import id.hokben.clientkiosk.utils.Utils
 import id.hokben.clientkiosk.webrtc.SimpleSdpObserver
@@ -92,7 +91,7 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
     private fun initShareScreen() {
         Log.e("NotError", "MainActivity@initShareScreen")
 
-        surfaceView = binding.surfaceViewShareScreen
+//        surfaceView = binding.surfaceViewShareScreen
         listener = this
         webrtcServiceRepository.startIntent(Utils.getUsername(contentResolver))
         startScreenCapture()
@@ -289,9 +288,9 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
         //        binding.surfaceView.init(rootEglBase.getEglBaseContext(), null);
 //        binding.surfaceView.setEnableHardwareScaler(true);
 //        binding.surfaceView.setMirror(true);
-        binding!!.surfaceShareCamera.init(rootEglBase?.eglBaseContext, null)
-        binding!!.surfaceShareCamera.setEnableHardwareScaler(true)
-        binding!!.surfaceShareCamera.setMirror(true)
+//        binding!!.surfaceShareCamera.init(rootEglBase?.eglBaseContext, null)
+//        binding!!.surfaceShareCamera.setEnableHardwareScaler(true)
+//        binding!!.surfaceShareCamera.setMirror(true)
 
         //add one more
     }
@@ -431,7 +430,7 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
                 val remoteAudioTrack = mediaStream.audioTracks[0]
                 remoteAudioTrack.setEnabled(true)
                 remoteVideoTrack.setEnabled(true)
-                remoteVideoTrack.addSink(binding.surfaceShareCamera)
+//                remoteVideoTrack.addSink(binding.surfaceShareCamera)
             }
 
             override fun onRemoveStream(mediaStream: MediaStream) {
@@ -564,11 +563,11 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
     }
 
     override fun onRemoteStreamAdded(stream: org.webrtc.MediaStream) {
-        runOnUiThread {
-            stream.videoTracks[0].addSink(
-                binding.surfaceViewShareScreen
-            )
-        }
+//        runOnUiThread {
+//            stream.videoTracks[0].addSink(
+//                binding.surfaceViewShareScreen
+//            )
+//        }
     }
 
     override fun onCallEndReceived() {

@@ -63,13 +63,13 @@ class WebrtcClient @Inject constructor(
     }
 
     fun initializeWebrtcClient(
-        username: String, view: SurfaceViewRenderer, observer: Observer
+        username: String, observer: Observer
     ) {
 
         this.username = username
         this.observer = observer
         peerConnection = createPeerConnection(observer)
-        initSurfaceView(view)
+//        initSurfaceView(view)
     }
 
     fun setPermissionIntent(intent: Intent) {
@@ -85,8 +85,8 @@ class WebrtcClient @Inject constructor(
         }
     }
 
-    fun startScreenCapturing(view: SurfaceViewRenderer) {
-        Log.e("NotError", "startScreenCapturing: SurfaceViewRenderer id: ${view.id}")
+    fun startScreenCapturing() {
+//        Log.e("NotError", "startScreenCapturing: SurfaceViewRenderer id: ${view.id}")
         val displayMetrics = DisplayMetrics()
         val windowsManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowsManager.defaultDisplay.getMetrics(displayMetrics)
@@ -230,7 +230,7 @@ class WebrtcClient @Inject constructor(
         localSurfaceView.let {
             it.clearImage()
             it.release()
-            initializeWebrtcClient(username, it, observer)
+            initializeWebrtcClient(username, observer)
         }
     }
 
