@@ -10,6 +10,7 @@ buildscript {
 }
 
 android {
+    namespace 'id.hokben.clientkiosk'
     defaultConfig {
         // Get the properties from local.properties
         Properties properties = new Properties()
@@ -35,7 +36,7 @@ android {
     }
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
-        applicationId "com.myhexaville.androidwebrtc"
+        applicationId "id.hokben.clientkiosk"
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
@@ -49,7 +50,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    namespace 'com.myhexaville.androidwebrtc'
     kotlinOptions {
         jvmTarget = '17'
     }

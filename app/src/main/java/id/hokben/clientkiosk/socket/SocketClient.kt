@@ -2,7 +2,7 @@ package id.hokben.clientkiosk.socket
 
 import android.util.Log
 import com.google.gson.Gson
-import id.myhexaville.androidwebrtc.BuildConfig
+import id.hokben.clientkiosk.BuildConfig
 import id.hokben.clientkiosk.utils.DataModel
 import id.hokben.clientkiosk.utils.DataModelType
 import kotlinx.coroutines.CoroutineScope
