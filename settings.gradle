@@ -1,0 +1,2 @@
+rootProject.name='HokbenClientKiosk'
+include ':app'
