@@ -7,6 +7,7 @@ import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,8 +82,22 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
 
 
         binding.askHelpBtn.setOnClickListener {
-            startVideoCapture()
-            initShareScreen()
+
+            val builder = AlertDialog.Builder(this)
+            builder
+                .setTitle("Peringatan!")
+                .setMessage("Kamera dan mikrophone kiosk ini akan menyala dan layar anda akan terlihat oleh tim support kami.")
+                .setPositiveButton("Ok") { dialog, _ ->
+                    binding.askHelpBtn.isEnabled = false
+                    startVideoCapture()
+                    initShareScreen()
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Batalkan") { dialog, _ ->
+                    dialog.cancel()
+                }
+            // Create the AlertDialog object and return it.
+            builder.create().show()
         }
     }
 
@@ -453,74 +468,6 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
         return peerConnectionFactory.createPeerConnection(
             iceServers, pcObserver
         )
-//        val iceServers = ArrayList<PeerConnection.IceServer>()
-//        val URL = "stun:stun.l.google.com:19302"
-//        iceServers.add(PeerConnection.IceServer(URL))
-//
-//        val rtcConfig = RTCConfiguration(iceServers)
-//        val pcConstraints = MediaConstraints()
-//
-//        val pcObserver: PeerConnection.Observer = object : PeerConnection.Observer {
-//            override fun onSignalingChange(signalingState: PeerConnection.SignalingState) {
-//                Log.d(TAG, "onSignalingChange: ")
-//            }
-//
-//            override fun onIceConnectionChange(iceConnectionState: IceConnectionState) {
-//                Log.d(TAG, "onIceConnectionChange: ")
-//            }
-//
-//            override fun onIceConnectionReceivingChange(b: Boolean) {
-//                Log.d(TAG, "onIceConnectionReceivingChange: ")
-//            }
-//
-//            override fun onIceGatheringChange(iceGatheringState: IceGatheringState) {
-//                Log.d(TAG, "onIceGatheringChange: ")
-//            }
-//
-//            override fun onIceCandidate(iceCandidate: IceCandidate) {
-//                Log.d(TAG, "onIceCandidate: ")
-//                val message = JSONObject()
-//
-//                try {
-//                    message.put("type", "candidate")
-//                    message.put("label", iceCandidate.sdpMLineIndex)
-//                    message.put("id", iceCandidate.sdpMid)
-//                    message.put("candidate", iceCandidate.sdp)
-//
-//                    Log.d(TAG, "onIceCandidate: sending candidate $message")
-//                    sendMessage(message)
-//                } catch (e: JSONException) {
-//                    e.printStackTrace()
-//                }
-//            }
-//
-//            override fun onIceCandidatesRemoved(iceCandidates: Array<IceCandidate>) {
-//                Log.d(TAG, "onIceCandidatesRemoved: ")
-//            }
-//
-//            override fun onAddStream(mediaStream: MediaStream) {
-//                Log.d(TAG, "onAddStream: " + mediaStream.videoTracks.size)
-//                val remoteVideoTrack = mediaStream.videoTracks[0]
-//                val remoteAudioTrack = mediaStream.audioTracks[0]
-//                remoteAudioTrack.setEnabled(true)
-//                remoteVideoTrack.setEnabled(true)
-//                remoteVideoTrack.addRenderer(VideoRenderer(binding!!.surfaceShareCamera))
-//            }
-//
-//            override fun onRemoveStream(mediaStream: MediaStream) {
-//                Log.d(TAG, "onRemoveStream: ")
-//            }
-//
-//            override fun onDataChannel(dataChannel: DataChannel) {
-//                Log.d(TAG, "onDataChannel: ")
-//            }
-//
-//            override fun onRenegotiationNeeded() {
-//                Log.d(TAG, "onRenegotiationNeeded: ")
-//            }
-//        }
-//
-//        return factory!!.createPeerConnection(rtcConfig, pcConstraints, pcObserver)
     }
 
     private fun createVideoCapturer(): VideoCapturer? {
@@ -590,4 +537,6 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
 
         private const val capturePermissionRequestCode = 1
     }
+
+
 }
