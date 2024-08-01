@@ -27,7 +27,7 @@
         <activity
             android:name="id.hokben.clientkiosk.MainActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
