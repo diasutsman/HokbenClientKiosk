@@ -3,6 +3,7 @@ package id.hokben.clientkiosk.utils
 import android.annotation.SuppressLint
 import android.content.ContentResolver
 import android.os.Build
+import id.hokben.clientkiosk.BuildConfig
 
 object Utils {
     @SuppressLint("HardwareIds")
@@ -19,8 +20,8 @@ object Utils {
         }
 
         val map: MutableMap<String, String> = HashMap()
-        map["POCO"] = "Infinix"
-        map["Infinix"] = "POCO"
+        map[BuildConfig.CLIENT_DEVICE] = BuildConfig.CREW_DEVICE
+        map[BuildConfig.CREW_DEVICE] = BuildConfig.CLIENT_DEVICE
         val result = map[deviceId] ?: return ""
         return result
     }

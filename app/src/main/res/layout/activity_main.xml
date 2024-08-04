@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -17,53 +17,61 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--                <LinearLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:orientation="vertical"-->
-<!--                    app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_brand_name"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ask_help_btn" />
+
+        <!--                <LinearLayout-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:orientation="vertical"-->
+        <!--                    app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
 
-<!--                    <FrameLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="0dp"-->
-<!--                        android:visibility="invisible"-->
-<!--                        android:layout_weight="1">-->
+        <!--                    <FrameLayout-->
+        <!--                        android:layout_width="match_parent"-->
+        <!--                        android:layout_height="0dp"-->
+        <!--                        android:visibility="invisible"-->
+        <!--                        android:layout_weight="1">-->
 
-<!--                        <org.webrtc.SurfaceViewRenderer-->
-<!--                            android:id="@+id/surface_share_camera"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="match_parent" />-->
+        <!--                        <org.webrtc.SurfaceViewRenderer-->
+        <!--                            android:id="@+id/surface_share_camera"-->
+        <!--                            android:layout_width="match_parent"-->
+        <!--                            android:layout_height="match_parent" />-->
 
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_gravity="top|end"-->
-<!--                            android:layout_margin="16dp"-->
-<!--                            android:text="Other Phone"-->
-<!--                            android:textColor="#fff" />-->
-<!--                    </FrameLayout>-->
+        <!--                        <TextView-->
+        <!--                            android:layout_width="wrap_content"-->
+        <!--                            android:layout_height="wrap_content"-->
+        <!--                            android:layout_gravity="top|end"-->
+        <!--                            android:layout_margin="16dp"-->
+        <!--                            android:text="Other Phone"-->
+        <!--                            android:textColor="#fff" />-->
+        <!--                    </FrameLayout>-->
 
-<!--                    <FrameLayout-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="0dp"-->
-<!--                        android:visibility="invisible"-->
-<!--                        android:layout_weight="1">-->
+        <!--                    <FrameLayout-->
+        <!--                        android:layout_width="match_parent"-->
+        <!--                        android:layout_height="0dp"-->
+        <!--                        android:visibility="invisible"-->
+        <!--                        android:layout_weight="1">-->
 
-<!--                        <org.webrtc.SurfaceViewRenderer-->
-<!--                            android:id="@+id/surfaceView_share_screen"-->
-<!--                            android:layout_width="match_parent"-->
-<!--                            android:layout_height="match_parent" />-->
+        <!--                        <org.webrtc.SurfaceViewRenderer-->
+        <!--                            android:id="@+id/surfaceView_share_screen"-->
+        <!--                            android:layout_width="match_parent"-->
+        <!--                            android:layout_height="match_parent" />-->
 
-<!--                        <TextView-->
-<!--                            android:layout_width="wrap_content"-->
-<!--                            android:layout_height="wrap_content"-->
-<!--                            android:layout_gravity="top|end"-->
-<!--                            android:layout_margin="16dp"-->
-<!--                            android:text="Other Phone Share Screen"-->
-<!--                            android:textColor="#fff" />-->
-<!--                    </FrameLayout>-->
-<!--                </LinearLayout>-->
+        <!--                        <TextView-->
+        <!--                            android:layout_width="wrap_content"-->
+        <!--                            android:layout_height="wrap_content"-->
+        <!--                            android:layout_gravity="top|end"-->
+        <!--                            android:layout_margin="16dp"-->
+        <!--                            android:text="Other Phone Share Screen"-->
+        <!--                            android:textColor="#fff" />-->
+        <!--                    </FrameLayout>-->
+        <!--                </LinearLayout>-->
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

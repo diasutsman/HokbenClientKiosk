@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity(), MainRepository.Listener {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
+        binding.edtBrandName.setText(Build.BRAND)
 
         binding.askHelpBtn.setOnClickListener {
 
