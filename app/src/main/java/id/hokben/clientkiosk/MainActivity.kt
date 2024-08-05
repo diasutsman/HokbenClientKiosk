@@ -1,30 +1,31 @@
 package id.hokben.clientkiosk
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import dagger.hilt.android.AndroidEntryPoint
 import id.hokben.clientkiosk.databinding.ActivityMainBinding
-import id.hokben.clientkiosk.service.WebrtcServiceRepository
+
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
-import javax.inject.Inject
 
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-
-    @Inject
-    lateinit var webrtcServiceRepository: WebrtcServiceRepository
-
-    private lateinit var binding: ActivityMainBinding;
+    private lateinit var binding: ActivityMainBinding
+    private val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            startRecordVideoAndShareScreen(data)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -58,20 +59,13 @@ class MainActivity : AppCompatActivity() {
             val mediaProjectionManager =
                 getSystemService(MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
 
-            startActivityForResult(
-                mediaProjectionManager.createScreenCaptureIntent(), capturePermissionRequestCode
-            )
+            resultLauncher.launch(mediaProjectionManager.createScreenCaptureIntent())
         } else {
             EasyPermissions.requestPermissions(this, "Need some permissions", RC_CALL, *perms)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        Log.e("NotError", "MainActivity@onActivityResult")
-        if (requestCode != capturePermissionRequestCode) {
-            return
-        }
+    private fun startRecordVideoAndShareScreen(data: Intent?) {
 
         ShareScreenAndCameraService.screenPermissionIntent = data
         val intent = Intent(this, ShareScreenAndCameraService::class.java)
@@ -85,7 +79,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val RC_CALL = 111
-        private const val capturePermissionRequestCode = 1
     }
 
 

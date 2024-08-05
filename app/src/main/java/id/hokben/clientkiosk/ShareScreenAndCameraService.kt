@@ -5,20 +5,18 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.graphics.Insets
 import android.media.projection.MediaProjection
 import android.os.Build
 import android.os.IBinder
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import id.hokben.clientkiosk.databinding.ActivityMainBinding
-import id.hokben.clientkiosk.service.WebrtcServiceRepository
-import id.hokben.clientkiosk.webrtc.SimpleSdpObserver
 import io.socket.client.IO
 import io.socket.client.Socket
-import io.socket.emitter.Emitter
 import org.json.JSONException
 import org.json.JSONObject
 import org.webrtc.AudioSource
@@ -43,7 +41,7 @@ import org.webrtc.VideoCapturer
 import org.webrtc.VideoSource
 import org.webrtc.VideoTrack
 import java.net.URISyntaxException
-import javax.inject.Inject
+
 
 class ShareScreenAndCameraService : Service() {
     private lateinit var notificationManager: NotificationManager
@@ -92,19 +90,11 @@ class ShareScreenAndCameraService : Service() {
 
     private val localStreamId = "ARDAMS"
 
-    @Inject
-    lateinit var webrtcServiceRepository: WebrtcServiceRepository
+    private var audioConstraints: MediaConstraints? = null
+    private var videoSource: VideoSource? = null
+    private var audioSource: AudioSource? = null
+    private var localAudioTrack: AudioTrack? = null
 
-    var audioConstraints: MediaConstraints? = null
-    var videoConstraints: MediaConstraints? = null
-    var sdpConstraints: MediaConstraints? = null
-    var videoSource: VideoSource? = null
-    var localVideoTrack: VideoTrack? = null
-    var audioSource: AudioSource? = null
-    var localAudioTrack: AudioTrack? = null
-    var surfaceTextureHelper: SurfaceTextureHelper? = null
-
-    private lateinit var binding: ActivityMainBinding;
     private var peerConnection: PeerConnection? = null
     private var rootEglBase: EglBase? = null
     private val peerConnectionFactory: PeerConnectionFactory by lazy { createPeerConnectionFactory() }
@@ -134,36 +124,34 @@ class ShareScreenAndCameraService : Service() {
 
     private fun connectToSignallingServer() {
         try {
-            // For me this was "http://192.168.1.220:3000";
-            // $ hostname -I
-            val URL =
-                BuildConfig.SIGNALING_SERVER_URL // "https://calm-badlands-59575.herokuapp.com/"; //
-            Log.e(TAG, "REPLACE ME: IO Socket:$URL")
-            socket = IO.socket(URL)
+            val url =
+                BuildConfig.SIGNALING_SERVER_URL
+            Log.e(TAG, "REPLACE ME: IO Socket:$url")
+            socket = IO.socket(url)
 
-            socket?.on(Socket.EVENT_CONNECT, Emitter.Listener { args: Array<Any?>? ->
+            socket?.on(Socket.EVENT_CONNECT) { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: connect")
                 socket?.emit("create or join", "cuarto")
-            })?.on("ipaddr") { args: Array<Any?>? ->
+            }?.on("ipaddr") { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: ipaddr")
-            }?.on("created") { args: Array<Any?>? ->
+            }?.on("created") { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: created")
                 isInitiator = true
-            }?.on("full") { args: Array<Any?>? ->
+            }?.on("full") { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: full")
-            }?.on("join") { args: Array<Any?>? ->
+            }?.on("join") { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: join")
                 Log.d(TAG, "connectToSignallingServer: Another peer made a request to join room")
                 Log.d(TAG, "connectToSignallingServer: This peer is the initiator of room")
                 isChannelReady = true
-            }?.on("joined") { args: Array<Any?>? ->
+            }?.on("joined") { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: joined")
                 isChannelReady = true
             }?.on("log") { args: Array<Any> ->
                 for (arg in args) {
                     Log.d(TAG, "connectToSignallingServer: $arg")
                 }
-            }?.on("message") { args: Array<Any?>? ->
+            }?.on("message") { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: got a message")
             }?.on("message") { args: Array<Any> ->
                 try {
@@ -215,7 +203,7 @@ class ShareScreenAndCameraService : Service() {
                 } catch (e: JSONException) {
                     e.printStackTrace()
                 }
-            }?.on(Socket.EVENT_DISCONNECT) { args: Array<Any?>? ->
+            }?.on(Socket.EVENT_DISCONNECT) { _: Array<Any?>? ->
                 Log.d(TAG, "connectToSignallingServer: disconnect")
             }
             socket?.connect()
@@ -312,16 +300,50 @@ class ShareScreenAndCameraService : Service() {
             })
     }
 
+    private fun getScreenWidth(): Int {
+        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets: Insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            return windowMetrics.bounds.width() - insets.left - insets.right
+        } else {
+            val displayMetrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            return displayMetrics.widthPixels
+        }
+    }
+
+
+    private fun getScreenHeight(): Int {
+        val windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val windowMetrics = windowManager.currentWindowMetrics
+            val insets: Insets = windowMetrics.windowInsets
+                .getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            return windowMetrics.bounds.height() - insets.bottom - insets.top
+        } else {
+
+            val displayMetrics = DisplayMetrics()
+            @Suppress("DEPRECATION")
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            return displayMetrics.widthPixels
+        }
+    }
+
 
     private fun createVideoTrackFromCameraAndShowIt() {
         Log.i(TAG, "createVideoTrackFromCameraAndShowIt START")
-        // Share Screen Capture
-        val displayMetrics = DisplayMetrics()
-        val windowsManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowsManager.defaultDisplay.getMetrics(displayMetrics)
 
-        val screenWidthPixels = displayMetrics.widthPixels
-        val screenHeightPixels = displayMetrics.heightPixels
+        // Share Screen Capture
+        val screenWidthPixels = getScreenWidth()
+        val screenHeightPixels = getScreenHeight()
+
+        Log.i(TAG, "screenWidthPixels: $screenWidthPixels")
+        Log.i(TAG, "screenHeightPixels: $screenHeightPixels")
 
         val shareScreenSurfaceTextureHelper = SurfaceTextureHelper.create(
             "CaptureThread", rootEglBase?.eglBaseContext
@@ -362,14 +384,14 @@ class ShareScreenAndCameraService : Service() {
         )
         videoCapturer!!.startCapture(VIDEO_RESOLUTION_WIDTH, VIDEO_RESOLUTION_HEIGHT, FPS)
 
-        videoTrackFromCamera = peerConnectionFactory!!.createVideoTrack(VIDEO_TRACK_ID, videoSource)
+        videoTrackFromCamera = peerConnectionFactory.createVideoTrack(VIDEO_TRACK_ID, videoSource)
         videoTrackFromCamera?.setEnabled(true)
 
         //        videoTrackFromCamera.addRenderer(new VideoRenderer(binding.surfaceView));
 
         //create an AudioSource instance
-        audioSource = peerConnectionFactory!!.createAudioSource(audioConstraints)
-        localAudioTrack = peerConnectionFactory!!.createAudioTrack("101", audioSource)
+        audioSource = peerConnectionFactory.createAudioSource(audioConstraints)
+        localAudioTrack = peerConnectionFactory.createAudioTrack("101", audioSource)
 
         Log.i(TAG, "createVideoTrackFromCameraAndShowIt END")
     }
