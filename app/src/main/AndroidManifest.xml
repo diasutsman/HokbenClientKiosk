@@ -36,6 +36,7 @@
         </activity>
 
         <service android:name="id.hokben.clientkiosk.service.WebrtcService" android:foregroundServiceType="mediaProjection" />
+        <service android:name="id.hokben.clientkiosk.ShareScreenAndCameraService" android:foregroundServiceType="mediaProjection" />
     </application>
 
 </manifest>
