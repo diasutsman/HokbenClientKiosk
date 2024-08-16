@@ -72,7 +72,7 @@ class ShareScreenAndCameraService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         startServiceWithNotification()
-        startVideoCapture(intent?.getStringExtra(IP_EXTRA))
+        startVideoCapture(intent?.getStringExtra(IP_EXTRA), intent?.getStringExtra(PORT_EXTRA) ?: DEFAULT_PORT_VALUE)
         return START_STICKY
     }
 
@@ -109,8 +109,8 @@ class ShareScreenAndCameraService : Service() {
         super.onDestroy()
     }
 
-    private fun startVideoCapture(ip: String? = null) {
-        connectToSignallingServer(ip)
+    private fun startVideoCapture(ip: String? = null, port: String = DEFAULT_PORT_VALUE) {
+        connectToSignallingServer(ip, port)
 
         initializeSurfaceViews()
 
@@ -123,9 +123,9 @@ class ShareScreenAndCameraService : Service() {
         startStreamingVideo()
     }
 
-    private fun connectToSignallingServer(ip: String? = null) {
+    private fun connectToSignallingServer(ip: String? = null, port: String = DEFAULT_PORT_VALUE) {
         try {
-            val url = if (ip != null) "http://$ip:3030" else BuildConfig.SIGNALING_SERVER_URL
+            val url = if (ip != null) "http://$ip:${port}" else BuildConfig.SIGNALING_SERVER_URL
 
             Log.e(TAG, "REPLACE ME: IO Socket:$url")
             socket = IO.socket(url)
@@ -550,6 +550,8 @@ class ShareScreenAndCameraService : Service() {
         const val VIDEO_RESOLUTION_HEIGHT: Int = 720
         const val FPS: Int = 30
         const val IP_EXTRA = "ip_extra"
+        const val PORT_EXTRA = "port_extra"
+        const val DEFAULT_PORT_VALUE = "3030"
     }
 
 

@@ -42,12 +42,21 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.edtIp.setText(sharedPref.getString(getString(R.string.local_ip_key), ""))
+        binding.edtPort.setText(
+            sharedPref.getString(getString(R.string.local_port_key), "3030")
+        )
 
         binding.askHelpBtn.setOnClickListener {
             if (binding.edtIp.text.toString().isBlank()) {
                 Toast.makeText(this, "Masukkan ip local", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+
+            if (binding.edtPort.text.toString().isBlank()) {
+                Toast.makeText(this, "Masukkan port local", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+
             val builder = AlertDialog.Builder(this)
             builder
                 .setTitle("Peringatan!")
@@ -88,6 +97,13 @@ class MainActivity : AppCompatActivity() {
                 ShareScreenAndCameraService.IP_EXTRA,
                 sharedPref.getString(getString(R.string.local_ip_key), null)
             )
+            putExtra(
+                ShareScreenAndCameraService.PORT_EXTRA,
+                sharedPref.getString(
+                    getString(R.string.local_port_key),
+                    ShareScreenAndCameraService.DEFAULT_PORT_VALUE
+                )
+            )
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -110,11 +126,26 @@ class MainActivity : AppCompatActivity() {
                         getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0)
                 }
-                Toast.makeText(this, "Local ip saved.", Toast.LENGTH_LONG)
-                    .show()
+
 
                 with(sharedPref.edit()) {
-                    putString(getString(R.string.local_ip_key), view.text.toString())
+                    when (view.id) {
+                        R.id.edt_ip -> {
+                            putString(getString(R.string.local_ip_key), view.text.toString())
+                            Toast.makeText(this@MainActivity, "Local ip saved.", Toast.LENGTH_LONG)
+                                .show()
+                        }
+
+                        R.id.edt_port -> {
+                            putString(getString(R.string.local_port_key), view.text.toString())
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Local port saved.",
+                                Toast.LENGTH_LONG
+                            )
+                                .show()
+                        }
+                    }
                     apply()
                 }
 

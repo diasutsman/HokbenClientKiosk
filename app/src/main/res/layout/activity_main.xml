@@ -29,6 +29,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/ask_help_btn" />
 
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edt_port"
+            android:hint="Port local signaling server"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edt_ip" />
+
         <!--                <LinearLayout-->
         <!--                    android:layout_width="match_parent"-->
         <!--                    android:layout_height="wrap_content"-->
