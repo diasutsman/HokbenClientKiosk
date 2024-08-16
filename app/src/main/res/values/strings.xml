@@ -218,4 +218,5 @@
     <string name="title_activity_sample_data_channel">SampleDataChannelActivity</string>
     <string name="title_activity_socket_io">SocketIOActivity</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="local_ip_key">local_ip_key</string>
 </resources>

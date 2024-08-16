@@ -45,6 +45,7 @@ import java.net.URISyntaxException
 
 class ShareScreenAndCameraService : Service() {
     private lateinit var notificationManager: NotificationManager
+
     override fun onCreate() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             notificationManager = getSystemService(
@@ -54,16 +55,16 @@ class ShareScreenAndCameraService : Service() {
         super.onCreate()
     }
 
-    private fun startServiceWithNotification(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+    private fun startServiceWithNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
-                "channel1","foreground",NotificationManager.IMPORTANCE_HIGH
+                "channel1", "foreground", NotificationManager.IMPORTANCE_HIGH
             )
             notificationManager.createNotificationChannel(notificationChannel)
-            val notification = NotificationCompat.Builder(this,"channel1")
+            val notification = NotificationCompat.Builder(this, "channel1")
                 .setSmallIcon(R.mipmap.ic_launcher)
 
-            startForeground(1,notification.build())
+            startForeground(1, notification.build())
         }
 
     }
@@ -71,7 +72,7 @@ class ShareScreenAndCameraService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
         startServiceWithNotification()
-        startVideoCapture()
+        startVideoCapture(intent?.getStringExtra(IP_EXTRA))
         return START_STICKY
     }
 
@@ -108,8 +109,8 @@ class ShareScreenAndCameraService : Service() {
         super.onDestroy()
     }
 
-    private fun startVideoCapture() {
-        connectToSignallingServer()
+    private fun startVideoCapture(ip: String? = null) {
+        connectToSignallingServer(ip)
 
         initializeSurfaceViews()
 
@@ -122,10 +123,10 @@ class ShareScreenAndCameraService : Service() {
         startStreamingVideo()
     }
 
-    private fun connectToSignallingServer() {
+    private fun connectToSignallingServer(ip: String? = null) {
         try {
-            val url =
-                BuildConfig.SIGNALING_SERVER_URL
+            val url = if (ip != null) "http://$ip:3030" else BuildConfig.SIGNALING_SERVER_URL
+
             Log.e(TAG, "REPLACE ME: IO Socket:$url")
             socket = IO.socket(url)
 
@@ -353,7 +354,8 @@ class ShareScreenAndCameraService : Service() {
             Thread.currentThread().name, rootEglBase?.eglBaseContext
         )
 
-        val shareScreenVideoSource = peerConnectionFactory.createVideoSource(screenCapturer?.isScreencast == true)
+        val shareScreenVideoSource =
+            peerConnectionFactory.createVideoSource(screenCapturer?.isScreencast == true)
         audioConstraints = MediaConstraints()
         screenCapturer = createScreenCapturer()
         screenCapturer!!.initialize(
@@ -547,6 +549,7 @@ class ShareScreenAndCameraService : Service() {
         const val VIDEO_RESOLUTION_WIDTH: Int = 1280
         const val VIDEO_RESOLUTION_HEIGHT: Int = 720
         const val FPS: Int = 30
+        const val IP_EXTRA = "ip_extra"
     }
 
 
